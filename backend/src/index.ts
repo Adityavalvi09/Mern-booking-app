@@ -37,6 +37,10 @@ app.use("/api/auth" , authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/my-hotels", myHotelRoutes)
 
+app.use("*" , (req: Request , res : Response)=>{
+    res.sendFile(path.join(__dirname , "../../frontend/dist/index.html"));
+})
+
 app.listen(7000 , ()=>{
     console.log("Server Running On LocalHost:7000");
 });

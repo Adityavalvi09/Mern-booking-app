@@ -14,4 +14,5 @@ export interface HotelType extends Document {
   starRating: number;
   imageUrls: string[];
   lastUpdated: Date;
+  _id: string;
 }

@@ -1,5 +1,11 @@
 import { Document } from 'mongoose';
 
+export interface UserType {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }
 export interface HotelType extends Document {
   userId: string;
   name: string;

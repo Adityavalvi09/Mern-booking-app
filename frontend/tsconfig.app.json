@@ -23,5 +23,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "../backend/src/models/**/*.ts",
+    "../backend/src/shared/**/*.ts"
+  ]
 }

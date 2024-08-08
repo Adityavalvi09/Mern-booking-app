@@ -1,58 +1,38 @@
+import mongoose, { Document, Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-import express , {Request , Response } from "express";
-import User from "../models/user";
-import { check, validationResult} from "express-validator";
-import jwt from "jsonwebtoken";
+export type UserType = {
+    _id: string;
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+};
 
-const router = express.Router();
+// Interface for the user document
+interface UserDocument extends UserType, Document {
+    _id: string;
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+}
 
+const userSchema = new Schema<UserDocument>({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+});
 
-router.post("/register" ,[
-    check("firstName" , "First Name is Required").isString(),
-    check("lastName" ,"LastName is Required").isString(),
-    check("email" ,"Email is Required ").isString(),
-    check("password" , "Password with 8 or more characters required").isLength({min:8 ,
-        
-    }),
-] ,
-async (req:Request , res: Response)=>{
-             const errors = validationResult(req);
-             if(!errors.isEmpty()){
-                return res.status(400).json({message:errors.array()});
-             }
-    try{
-     
-
-        let user = await User .findOne({
-            email :req.body.email,
-        });
-
-        if(user){
-            return res.status(400).json({message : "User already exists"});
-        }
-
-        user = new User(req.body)
-        await user.save();
-
-
-        const token =  jwt.sign({userId: user.id},process.env.JWT_SECRET_KEY as string,
-            {
-            expiresIn: "1d",
-            }
-    );
-
-        res.cookie("auth_token" , token , {
-            httpOnly:true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 86400000,
-        })
-
-        return res.status(200).send({message : "User Register OK!"});
-    }catch (error){
-        console.log(error);
-        res.status(500).send({message: "something went wrong"})
-
+userSchema.pre('save', async function (next) {
+    const user = this as UserDocument;
+    if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, 8);
     }
-})
+    next();
+});
 
-export default router;
+const User = mongoose.model<UserDocument>('User', userSchema);
+
+export default User;

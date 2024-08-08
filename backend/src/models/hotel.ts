@@ -1,5 +1,6 @@
+import { HotelType } from "../shared/types";
 import mongoose from "mongoose";
-import { HotelType } from "@shared/types";
+
 
 
 

@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { UserType } from '@shared/types';
+import { UserType } from '../shared/types';
 
 interface UserDocument extends Omit<UserType, '_id'>, Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
